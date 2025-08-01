@@ -1,93 +1,119 @@
-# 🌐 Terraform Multi-Cloud Module
+# Terraform Multi-Cloud Module
 
-**Terraform module to provision multi-cloud infrastructure using Kubernetes services (EKS on AWS, GKE on GCP)**
+> Terraform module for multi-cloud infrastructure (EKS/GKE)
 
-The goal is to enable a highly available, flexible, and performant infrastructure by deploying workloads across multiple cloud platforms.
+The goal here is to provision multi-cloud infrastructure using Kubernetes services from different cloud providers (AWS, GCP) that could bring forth several advantages including high availability, optimal performance and increased flexibility.
 
----
-
-## 🚀 Prerequisites
+## Prequisites
 
 - AWS Account
 - GCP Project
-- CLI Tools:
-  - `terraform`
-  - `kubectl`
-  - `aws`
-  - `gcloud`
+- CLI tools
+  - terraform
+  - kubectl
+  - aws
+  - gcloud
 
----
+## Modules
 
-## 🧩 Modules
+- [`aws-eks-vpc`](./modules/aws-eks-vpc/) - EKS compliant VPC
+- [`aws-eks-fargate`](./modules/aws-eks-fargate/) - EKS cluster with Fargate profile
+- [`aws-eks-lbc-addon`](./modules/aws-eks-lbc-addon/) - AWS load balancer controller add-on
+- [`aws-ec2-nginx`](./modules/aws-ec2-nginx/) - NGINX server in EC2 instance
+- [`gcp-gke-autopilot`](./modules/gcp-gke-autopilot/) - GKE cluster in autopilot mode
 
-| Module Name           | Description                              |
-|-----------------------|------------------------------------------|
-| `aws-eks-vpc`         | EKS-compliant VPC                        |
-| `aws-eks-fargate`     | EKS cluster with Fargate profile         |
-| `aws-eks-lbc-addon`   | AWS Load Balancer Controller add-on      |
-| `aws-ec2-nginx`       | EC2 NGINX server for reverse proxy       |
-| `gcp-gke-autopilot`   | GKE cluster in Autopilot mode            |
+## Example
 
----
-
-## 🔧 Usage Examples
-
-### ✅ Create EKS Cluster with Fargate and Load Balancer
+1. Create EKS cluster with Fargate profile and AWS load balancer controller
 
 ```bash
+
+# 1. Go to directory
 cd examples/aws-eks-fargate
+
+# 2. Create terraform variables file.
 cp terraform.tfvars.sample terraform.tfvars
 
-# Edit terraform.tfvars with your AWS credentials
+# 3. Enter AWS credentials in terraform.tfvars
+aws_access_key_id     = "<ACCESS_KEY>"
+aws_access_secret_key = "<ACCESS_SECRET>"
+
+# 3. Initialize terraform
 terraform init
+
+# 4. Apply infrastructure
 terraform apply
-✅ Create GKE Autopilot Cluster
-bash
-Copy
-Edit
+```
+
+2. Create GKE cluster in autopilot mode
+
+```bash
+
+# 1. Go to directory
 cd examples/gcp-gke-autopilot
+
+# 2. Create terraform variables file.
 cp terraform.tfvars.sample terraform.tfvars
 
-# Edit terraform.tfvars with your GCP project ID
+# 3. Enter GCP project ID in terraform.tfvars
+project_id            = "<PROJECT_ID>"
+
+# 3. Initialize terraform
 terraform init
+
+# 4. Apply infrastructure
 terraform apply
-🌐 Deploy Sample App on EKS + GKE
-bash
-Copy
-Edit
+```
+
+3. Deploy sample application to both EKS and GCP cluster. This will also setup load balancers in respective cloud cluster
+
+```bash
+
+# 1. Go to directory
 cd examples/multi-cloud-sample-app
+
+# 2. Create terraform variables file.
 cp terraform.tfvars.sample terraform.tfvars
 
-# Add AWS & GCP credentials
+# 3. Enter AWS & GCP credentials in terraform.tfvars
+aws_access_key_id     = "<ACCESS_KEY>"
+aws_access_secret_key = "<ACCESS_SECRET>"
+project_id            = "<PROJECT_ID>"
+
+# 3. Initialize terraform
 terraform init
+
+# 4. Apply infrastructure
 terraform apply
-🔁 Provision NGINX Load Balancer on EC2
-bash
-Copy
-Edit
+```
+
+4. Provision NGINX load balancer in EC2 instance which distributes the traffic to EKS & GKE load balancer
+
+```bash
+
+# 1. Go to directory
 cd examples/multi-cloud-nginx-lb
+
+# 2. Create terraform variables file.
 cp terraform.tfvars.sample terraform.tfvars
 
-# Add AWS & GCP credentials
+# 3. Enter AWS & GCP credentials in terraform.tfvars
+aws_access_key_id     = "<ACCESS_KEY>"
+aws_access_secret_key = "<ACCESS_SECRET>"
+project_id            = "<PROJECT_ID>"
+
+# 3. Initialize terraform
 terraform init
+
+# 4. Apply infrastructure
 terraform apply
-🛣️ Roadmap
-✅ AWS EKS Cluster
 
-✅ GKE Autopilot Mode Cluster
+```
 
-🔄 EKS Multi-region (via AWS Global Accelerator)
+## Roadmap
 
-🔄 GKE Multi-region (via GKE Multi-Cluster Services)
-
-🔄 Multi-cloud load balancing with failover
-
-Clouds Used:
-✅ Amazon Web Services (AWS)
-✅ Google Cloud Platform (GCP)
-
-vbnet
-Copy
-Edit
-
-Let me know if you want a project logo, image diagram, or badges added too.
+- [x] AWS EKS Cluster
+- [x] GKE cluster autopilot mode
+- [ ] EKS multi-region cluster using Global Accelerator
+- [ ] GKE multi-region cluster using MCS (Multi Cluster Service)
+- [ ] Multi-cloud load balancing with failover
